@@ -61,6 +61,3 @@ output/
 data/
 logs/
 examples/output/
-
-# Energy analytics clone (temporary)
-energy-analytics/

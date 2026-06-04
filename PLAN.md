@@ -1,7 +1,7 @@
 # Schema-Faker Implementation Plan
 
 ## Phase 1: Foundation & Architecture (Days 1-2)
-- **Project Structure**: Mirror energy-analytics with `src/`, `tests/`, `sql/` directories
+- **Project Structure**: Clean architecture with `src/`, `tests/`, `sql/` directories
 - **Dependencies**: Set up `pyproject.toml` with uv, pydantic, click, faker libraries
 - **Base Classes**: Create `BaseGenerator(ABC)`, `BaseProcessor`, `BaseExporter` abstractions
 - **Configuration System**: Pydantic dataclasses for schema definitions with YAML/JSON support
@@ -21,13 +21,13 @@
 - **Pipeline Integration**: Template method pattern for parse → generate → validate → export
 
 ## Phase 4: Testing & Quality (Days 7-8)
-- **Test Infrastructure**: Unit/integration/e2e tests following energy-analytics patterns
+- **Test Infrastructure**: Unit/integration/e2e tests with comprehensive coverage
 - **Code Quality**: Ruff linting, pre-commit hooks, 100% coverage target
 - **Example Schemas**: Sample YAML configurations for common use cases
 - **Documentation**: README with usage examples and schema format specification
 
 **Key Architecture Decisions**:
-- Use **Pydantic** for schema validation (like energy-analytics config management)
+- Use **Pydantic** for schema validation and type safety
 - Implement **Factory pattern** for generator selection
 - Apply **composition over inheritance** for flexible data generation
 - Follow **clean architecture** with clear separation between parsing, generation, and export

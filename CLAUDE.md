@@ -1,7 +1,7 @@
 # Schema-Faker Project
 
 ## Overview
-Configurable synthetic data generator CLI tool built with modern Python practices, inspired by the energy-analytics project architecture.
+Configurable synthetic data generator CLI tool built with modern Python practices.
 
 ## Project Structure
 ```
@@ -60,7 +60,7 @@ schema-faker/
 - **Production CLI**: Full-featured command-line interface with progress reporting
 
 ### Architecture Highlights
-- **Clean Architecture**: Following energy-analytics patterns with utils/, generators/, exporters/
+- **Clean Architecture**: Clean separation of concerns with utils/, generators/, exporters/
 - **Pydantic Validation**: Comprehensive field validation with custom validators
 - **Abstract Base Classes**: `BaseGenerator`, `BaseProcessor`, `BaseExporter`, `BasePipeline`
 - **Factory Patterns**: `GeneratorFactory` and `ExporterFactory` for polymorphic creation
@@ -134,7 +134,7 @@ datasets:
 - **Advanced Features**: nullable fields, choices, custom patterns
 
 ## Development Approach
-Following the energy-analytics project patterns:
+Following modern Python development patterns:
 
 ### Code Quality Standards
 - **Type Safety**: Full Pydantic integration with validation
