@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
 
 from schema_faker.generators.numeric import NumericGenerator
 from schema_faker.utils.schema_models import NumericFieldConfig, NumericSubtype
@@ -127,15 +128,10 @@ class TestNumericGenerator:
 
     def test_unsupported_subtype_raises_error(self):
         """Test that unsupported subtype raises error."""
-        config = NumericFieldConfig(
-            min_value=1,
-            max_value=10,
-            subtype="unsupported",  # Invalid subtype
-        )
-
-        # This should work during initialization
-        generator = NumericGenerator("test_error", config)
-
-        # But should fail during generation
-        with pytest.raises(ValueError, match="Unsupported numeric subtype"):
-            generator.generate()
+        # With Pydantic validation, invalid subtypes are caught at model creation
+        with pytest.raises(ValidationError):
+            NumericFieldConfig(
+                min_value=1,
+                max_value=10,
+                subtype="unsupported",  # Invalid subtype
+            )

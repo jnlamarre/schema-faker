@@ -106,9 +106,14 @@ class FieldDefinition(BaseModel):
     type: DataType
     nullable: bool = False
     null_probability: float = 0.0  # Probability of null when nullable=True
-    config: NumericFieldConfig | StringFieldConfig | DateFieldConfig | BooleanFieldConfig | dict[
-        str, Any
-    ] | None = None
+    config: (
+        NumericFieldConfig
+        | StringFieldConfig
+        | DateFieldConfig
+        | BooleanFieldConfig
+        | dict[str, Any]
+        | None
+    ) = None
 
     @field_validator("null_probability")
     @classmethod

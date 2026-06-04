@@ -26,6 +26,9 @@ class DateTimeGenerator(BaseGenerator):
         self.date_config = config
         self.faker = Faker(locale)
 
+        # Create a dedicated random instance for this generator
+        self._random = random.Random()
+
         # Parse date range
         self.start_date = (
             self._parse_date(config.start_date) if config.start_date else None
@@ -34,9 +37,6 @@ class DateTimeGenerator(BaseGenerator):
 
         # Set default range if not specified
         self._set_default_range()
-
-        # Seed faker for reproducible results
-        self.faker.seed_instance(42)
 
     def _parse_date(self, date_str: str) -> datetime:
         """
@@ -96,7 +96,7 @@ class DateTimeGenerator(BaseGenerator):
         Args:
             seed: Random seed value
         """
-        random.seed(seed)
+        self._random.seed(seed)
         self.faker.seed_instance(seed)
 
     def generate(self) -> str:
@@ -133,7 +133,7 @@ class DateTimeGenerator(BaseGenerator):
         total_seconds = int(time_difference.total_seconds())
 
         # Generate random offset
-        random_seconds = random.randint(0, total_seconds)
+        random_seconds = self._random.randint(0, total_seconds)
 
         # Return random datetime
         return self.start_date + timedelta(seconds=random_seconds)
@@ -212,7 +212,11 @@ class DateTimeGenerator(BaseGenerator):
         total_seconds = int(time_difference.total_seconds())
 
         # Generate all random offsets at once
+<<<<<<< HEAD
         random_offsets = [random.randint(0, total_seconds) for _ in range(count)]
+=======
+        random_offsets = [self._random.randint(0, total_seconds) for _ in range(count)]
+>>>>>>> c2100dd (Complete Phase 2: Core data generation system with comprehensive testing)
 
         # Generate all datetimes and format them
         return [

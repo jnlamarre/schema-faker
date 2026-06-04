@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from schema_faker.generators import (
     BooleanGenerator,
@@ -142,15 +143,13 @@ class TestGeneratorFactory:
 
     def test_unsupported_type_raises_error(self):
         """Test that unsupported field type raises error."""
-        # Create field with invalid type (this would normally be caught by Pydantic)
-        field_def = FieldDefinition(
-            name="test_field",
-            type="unsupported_type",  # Invalid
-            config=None,
-        )
-
-        with pytest.raises(ValueError, match="Unsupported field type"):
-            GeneratorFactory.create_generator(field_def)
+        # With Pydantic validation, invalid types are caught at model creation
+        with pytest.raises(ValidationError):
+            FieldDefinition(
+                name="test_field",
+                type="unsupported_type",  # Invalid
+                config=None,
+            )
 
     def test_get_supported_types(self):
         """Test getting list of supported types."""

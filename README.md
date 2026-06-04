@@ -47,12 +47,37 @@ datasets:
 2. Generate synthetic data:
 
 ```bash
-schema-faker -s users_schema.yaml -f json -o ./output/
+# Generate JSON output (default)
+schema-faker -s users_schema.yaml -o ./output/
+
+# Generate CSV with custom record count
+schema-faker -s users_schema.yaml -f csv -r 5000 -o ./output/
+
+# Generate SQL with seed for reproducible data
+schema-faker -s users_schema.yaml -f sql --seed 42 -o ./output/
+
+# Validate schema without generating data
+schema-faker -s users_schema.yaml --validate-only
+
+# List all supported export formats
+schema-faker --list-formats
 ```
+
+## CLI Options
+
+- `-s, --schema`: Path to YAML/JSON schema configuration file
+- `-o, --output`: Output directory for generated files
+- `-f, --format`: Export format (json, csv, sql)
+- `-r, --records`: Override record count for all datasets
+- `--seed`: Random seed for reproducible generation
+- `--locale`: Locale for data generation (default: en_US)
+- `--validate-only`: Validate schema without generating data
+- `--list-formats`: Show supported export formats and options
+- `-v, --verbose`: Enable verbose logging
 
 ## Project Status
 
-✅ **Phase 2 Complete** - Full data generation pipeline with advanced features
+🎉 **Phase 3 Complete** - Production-ready synthetic data generator with full export system
 
 ### Phase 1: Foundation ✅
 - ✅ **Project Structure**: Clean architecture with clear separation of concerns
@@ -65,15 +90,18 @@ schema-faker -s users_schema.yaml -f json -o ./output/
 - ✅ **NumericGenerator**: Integers, floats, decimals with statistical distributions (uniform, normal, exponential)
 - ✅ **StringGenerator**: Faker integration for names, emails, addresses, phones, IPs, UUIDs
 - ✅ **BooleanGenerator**: Configurable true/false probability
-- ✅ **DateTimeGenerator**: Date ranges, custom formats, business day filtering
+- ✅ **DateTimeGenerator**: Date ranges, custom formats, business day filtering with seed reproducibility
 - ✅ **GeneratorFactory**: Polymorphic creation with factory pattern
 - ✅ **SchemaProcessor**: Complete pipeline orchestration with validation and optimization
 - ✅ **Test Infrastructure**: 100+ optimized tests with comprehensive coverage
 
-### Next: Phase 3 - Export System ⏳
-- ⏳ **CSV/JSON/SQL Exporters**: Multiple output format support
-- ⏳ **Multi-Dataset**: Generate multiple related tables in single run
-- ⏳ **Complete CLI**: Full pipeline integration with progress reporting
+### Phase 3: Export System ✅
+- ✅ **CSVExporter**: Configurable CSV output with proper quoting and null handling
+- ✅ **JSONExporter**: Structured JSON with metadata, type-safe serialization
+- ✅ **SQLExporter**: Multi-dialect SQL (PostgreSQL, MySQL, SQLite, MSSQL) with batched INSERTs
+- ✅ **ExporterFactory**: Polymorphic exporter creation with format validation
+- ✅ **DataPipeline**: Complete orchestration with multi-dataset support
+- ✅ **CLI Integration**: Full featured command-line interface with validation, progress reporting
 
 ## Development
 
