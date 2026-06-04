@@ -1,0 +1,74 @@
+version: "1.0"
+
+datasets:
+  - table_name: "users"
+    record_count: 1000
+    output_format: "json"
+    output_path: "./output/users.json"
+    fields:
+      - name: "id"
+        type: "numeric"
+        config:
+          subtype: "integer"
+          min_value: 1
+          max_value: 999999
+
+      - name: "first_name"
+        type: "string"
+        config:
+          subtype: "first_name"
+          min_length: 2
+          max_length: 30
+
+      - name: "last_name"
+        type: "string"
+        config:
+          subtype: "last_name"
+          min_length: 2
+          max_length: 30
+
+      - name: "email"
+        type: "string"
+        config:
+          subtype: "email"
+
+      - name: "age"
+        type: "numeric"
+        config:
+          subtype: "integer"
+          min_value: 18
+          max_value: 100
+
+      - name: "salary"
+        type: "numeric"
+        config:
+          subtype: "float"
+          min_value: 30000.0
+          max_value: 200000.0
+          precision: 2
+
+      - name: "address"
+        type: "string"
+        config:
+          subtype: "address"
+
+      - name: "phone"
+        type: "string"
+        config:
+          subtype: "phone"
+
+      - name: "is_active"
+        type: "boolean"
+        config:
+          true_probability: 0.8
+
+      - name: "department"
+        type: "string"
+        nullable: true
+        null_probability: 0.1
+        config:
+          choices: ["Engineering", "Sales", "Marketing", "HR", "Finance"]
+
+global_config:
+  output_dir: "./output"
+  seed: 42
