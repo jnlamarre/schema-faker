@@ -212,11 +212,7 @@ class DateTimeGenerator(BaseGenerator):
         total_seconds = int(time_difference.total_seconds())
 
         # Generate all random offsets at once
-<<<<<<< HEAD
-        random_offsets = [random.randint(0, total_seconds) for _ in range(count)]
-=======
         random_offsets = [self._random.randint(0, total_seconds) for _ in range(count)]
->>>>>>> c2100dd (Complete Phase 2: Core data generation system with comprehensive testing)
 
         # Generate all datetimes and format them
         return [
