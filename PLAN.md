@@ -7,7 +7,7 @@
 - **Configuration System**: Pydantic dataclasses for schema definitions with YAML/JSON support
 
 ## Phase 2: Core Data Generation (Days 3-4)
-- **Generator Implementations**: 
+- **Generator Implementations**:
   - `NumericGenerator` (min/max ranges, distributions)
   - `StringGenerator` (random, names, addresses, IPs using Faker library)
   - `DateTimeGenerator`, `BooleanGenerator`

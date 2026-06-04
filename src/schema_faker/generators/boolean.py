@@ -56,13 +56,13 @@ class BooleanGenerator(BaseGenerator):
         sample = self.generate_batch(sample_size)
         true_count = sum(sample)
         false_count = sample_size - true_count
-        
+
         return {
             "true_probability": true_count / sample_size,
             "false_probability": false_count / sample_size,
             "true_count": true_count,
             "false_count": false_count,
-            "sample_size": sample_size
+            "sample_size": sample_size,
         }
 
     def validate_generated_value(self, value: Any) -> bool:

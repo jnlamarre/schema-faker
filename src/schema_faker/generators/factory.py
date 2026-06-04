@@ -1,18 +1,18 @@
-from typing import Any, Dict, Type
+from typing import Any
 
 from ..utils.base import BaseGenerator
 from ..utils.schema_models import (
-    FieldDefinition,
+    BooleanFieldConfig,
     DataType,
+    DateFieldConfig,
+    FieldDefinition,
     NumericFieldConfig,
     StringFieldConfig,
-    DateFieldConfig,
-    BooleanFieldConfig,
 )
+from .boolean import BooleanGenerator
+from .datetime import DateTimeGenerator
 from .numeric import NumericGenerator
 from .string import StringGenerator
-from .datetime import DateTimeGenerator
-from .boolean import BooleanGenerator
 
 
 class GeneratorFactory:
@@ -22,7 +22,7 @@ class GeneratorFactory:
     """
 
     # Registry of generator classes by data type
-    _generator_registry: Dict[DataType, Type[BaseGenerator]] = {
+    _generator_registry: dict[DataType, type[BaseGenerator]] = {
         DataType.NUMERIC: NumericGenerator,
         DataType.STRING: StringGenerator,
         DataType.DATE: DateTimeGenerator,
@@ -32,10 +32,7 @@ class GeneratorFactory:
 
     @classmethod
     def create_generator(
-        cls,
-        field_definition: FieldDefinition,
-        locale: str = "en_US",
-        seed: int = None
+        cls, field_definition: FieldDefinition, locale: str = "en_US", seed: int = None
     ) -> BaseGenerator:
         """
         Create appropriate generator for the given field definition.
@@ -68,29 +65,45 @@ class GeneratorFactory:
         try:
             if field_type == DataType.NUMERIC:
                 if not isinstance(config, NumericFieldConfig):
-                    config = NumericFieldConfig(**config) if isinstance(config, dict) else config
+                    config = (
+                        NumericFieldConfig(**config)
+                        if isinstance(config, dict)
+                        else config
+                    )
                 generator = NumericGenerator(field_name, config)
 
             elif field_type == DataType.STRING:
                 if not isinstance(config, StringFieldConfig):
-                    config = StringFieldConfig(**config) if isinstance(config, dict) else config
+                    config = (
+                        StringFieldConfig(**config)
+                        if isinstance(config, dict)
+                        else config
+                    )
                 generator = StringGenerator(field_name, config, locale)
 
             elif field_type in (DataType.DATE, DataType.DATETIME):
                 if not isinstance(config, DateFieldConfig):
-                    config = DateFieldConfig(**config) if isinstance(config, dict) else config
+                    config = (
+                        DateFieldConfig(**config)
+                        if isinstance(config, dict)
+                        else config
+                    )
                 generator = DateTimeGenerator(field_name, config, locale)
 
             elif field_type == DataType.BOOLEAN:
                 if not isinstance(config, BooleanFieldConfig):
-                    config = BooleanFieldConfig(**config) if isinstance(config, dict) else config
+                    config = (
+                        BooleanFieldConfig(**config)
+                        if isinstance(config, dict)
+                        else config
+                    )
                 generator = BooleanGenerator(field_name, config)
 
             else:
                 raise ValueError(f"Unsupported field type: {field_type}")
 
             # Set seed if provided
-            if seed is not None and hasattr(generator, 'set_seed'):
+            if seed is not None and hasattr(generator, "set_seed"):
                 generator.set_seed(seed)
 
             return generator
@@ -122,10 +135,12 @@ class GeneratorFactory:
         return defaults.get(field_type, {})
 
     @classmethod
-    def register_generator(cls, field_type: DataType, generator_class: Type[BaseGenerator]) -> None:
+    def register_generator(
+        cls, field_type: DataType, generator_class: type[BaseGenerator]
+    ) -> None:
         """
         Register a custom generator class for a field type.
-        
+
         This allows extending the factory with custom generators.
 
         Args:
@@ -152,8 +167,8 @@ class GeneratorFactory:
         cls,
         field_definitions: list[FieldDefinition],
         locale: str = "en_US",
-        seed: int = None
-    ) -> Dict[str, BaseGenerator]:
+        seed: int = None,
+    ) -> dict[str, BaseGenerator]:
         """
         Create generators for all fields in a dataset.
 
@@ -170,15 +185,18 @@ class GeneratorFactory:
         for i, field_def in enumerate(field_definitions):
             # Use incremental seeds for each field to ensure variety
             field_seed = (seed + i) if seed is not None else None
-            
+
             try:
                 generator = cls.create_generator(field_def, locale, field_seed)
                 generators[field_def.name] = generator
             except Exception as e:
                 # Log error and continue with other fields
                 import logging
+
                 logger = logging.getLogger(__name__)
-                logger.error(f"Failed to create generator for field '{field_def.name}': {e}")
+                logger.error(
+                    f"Failed to create generator for field '{field_def.name}': {e}"
+                )
                 continue
 
         return generators
@@ -196,13 +214,13 @@ class GeneratorFactory:
         """
         try:
             # Try to create a generator (without seed to avoid side effects)
-            generator = cls.create_generator(field_definition)
+            cls.create_generator(field_definition)
             return True
         except Exception:
             return False
 
     @classmethod
-    def get_generator_info(cls, field_type: DataType) -> Dict[str, Any]:
+    def get_generator_info(cls, field_type: DataType) -> dict[str, Any]:
         """
         Get information about a generator class.
 
@@ -220,5 +238,5 @@ class GeneratorFactory:
             "class_name": generator_class.__name__,
             "module": generator_class.__module__,
             "docstring": generator_class.__doc__,
-            "supported_type": field_type.value
+            "supported_type": field_type.value,
         }

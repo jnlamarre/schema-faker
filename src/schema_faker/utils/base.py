@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class BaseGenerator(ABC):
@@ -9,7 +9,7 @@ class BaseGenerator(ABC):
     Defines the common interface for generating synthetic data.
     """
 
-    def __init__(self, field_name: str, config: Dict[str, Any]):
+    def __init__(self, field_name: str, config: dict[str, Any]):
         """
         Initialize generator with field name and configuration.
 
@@ -31,7 +31,7 @@ class BaseGenerator(ABC):
         """
         pass  # pragma: no cover
 
-    def generate_batch(self, count: int) -> List[Any]:
+    def generate_batch(self, count: int) -> list[Any]:
         """
         Generate multiple synthetic data values.
 
@@ -50,7 +50,9 @@ class BaseProcessor(ABC):
     Handles schema parsing and generator orchestration.
     """
 
-    def __init__(self, schema_config: Dict[str, Any], logger: Optional[logging.Logger] = None):
+    def __init__(
+        self, schema_config: dict[str, Any], logger: logging.Logger | None = None
+    ):
         """
         Initialize processor with schema configuration and optional logger.
 
@@ -60,7 +62,7 @@ class BaseProcessor(ABC):
         """
         self.schema_config = schema_config
         self.logger = logger or logging.getLogger(f"{self.__class__.__name__}")
-        self.generators: Dict[str, BaseGenerator] = {}
+        self.generators: dict[str, BaseGenerator] = {}
 
     @abstractmethod
     def parse_schema(self) -> None:
@@ -70,7 +72,7 @@ class BaseProcessor(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def process_dataset(self, record_count: int) -> List[Dict[str, Any]]:
+    def process_dataset(self, record_count: int) -> list[dict[str, Any]]:
         """
         Generate a complete dataset using configured generators.
 
@@ -89,7 +91,7 @@ class BaseExporter(ABC):
     Handles exporting generated data to various formats.
     """
 
-    def __init__(self, table_name: str, logger: Optional[logging.Logger] = None):
+    def __init__(self, table_name: str, logger: logging.Logger | None = None):
         """
         Initialize exporter with table name and optional logger.
 
@@ -98,10 +100,12 @@ class BaseExporter(ABC):
             logger: Optional logger instance for exporter operations
         """
         self.table_name = table_name
-        self.logger = logger or logging.getLogger(f"{self.__class__.__name__}.{table_name}")
+        self.logger = logger or logging.getLogger(
+            f"{self.__class__.__name__}.{table_name}"
+        )
 
     @abstractmethod
-    def export(self, data: List[Dict[str, Any]], output_path: str) -> None:
+    def export(self, data: list[dict[str, Any]], output_path: str) -> None:
         """
         Export data to the specified output path.
 
@@ -111,7 +115,7 @@ class BaseExporter(ABC):
         """
         pass  # pragma: no cover
 
-    def validate_data(self, data: List[Dict[str, Any]]) -> bool:
+    def validate_data(self, data: list[dict[str, Any]]) -> bool:
         """
         Validate data before export.
 
@@ -142,7 +146,7 @@ class BasePipeline(ABC):
     Defines the common interface for parse -> generate -> export operations.
     """
 
-    def __init__(self, config: Dict[str, Any], logger: Optional[logging.Logger] = None):
+    def __init__(self, config: dict[str, Any], logger: logging.Logger | None = None):
         """
         Initialize pipeline with configuration and optional logger.
 
@@ -152,7 +156,9 @@ class BasePipeline(ABC):
         """
         self.config = config
         self.table_name = config.get("table_name", "unknown")
-        self.logger = logger or logging.getLogger(f"{self.__class__.__name__}.{self.table_name}")
+        self.logger = logger or logging.getLogger(
+            f"{self.__class__.__name__}.{self.table_name}"
+        )
 
     @abstractmethod
     def parse(self) -> None:
@@ -162,7 +168,7 @@ class BasePipeline(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def generate(self, record_count: int) -> List[Dict[str, Any]]:
+    def generate(self, record_count: int) -> list[dict[str, Any]]:
         """
         Generate synthetic data.
 
@@ -175,7 +181,9 @@ class BasePipeline(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def export(self, data: List[Dict[str, Any]], output_path: str, format_type: str) -> None:
+    def export(
+        self, data: list[dict[str, Any]], output_path: str, format_type: str
+    ) -> None:
         """
         Export generated data.
 
@@ -187,10 +195,7 @@ class BasePipeline(ABC):
         pass  # pragma: no cover
 
     def run_pipeline(
-        self,
-        record_count: int,
-        output_path: str,
-        format_type: str = "json"
+        self, record_count: int, output_path: str, format_type: str = "json"
     ) -> None:
         """
         Execute the complete pipeline: parse -> generate -> export.
@@ -200,7 +205,9 @@ class BasePipeline(ABC):
             output_path: Output file path
             format_type: Export format (csv, json, etc.)
         """
-        self.logger.info(f"Starting {self.__class__.__name__} pipeline for {self.table_name}...")
+        self.logger.info(
+            f"Starting {self.__class__.__name__} pipeline for {self.table_name}..."
+        )
 
         # Parse configuration
         self.parse()

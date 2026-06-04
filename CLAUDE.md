@@ -203,7 +203,7 @@ Following the energy-analytics project patterns:
 
 ### Schema Processing Pipeline
 - **SchemaProcessor**: Complete orchestration of multiple generators
-- **Validation**: Schema validation with detailed error reporting  
+- **Validation**: Schema validation with detailed error reporting
 - **Optimization**: Batch generation and nullable field handling
 - **Statistics**: Generation statistics and performance metrics
 

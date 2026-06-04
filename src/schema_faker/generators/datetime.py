@@ -1,6 +1,6 @@
 import random
-from datetime import datetime, timedelta, date
-from typing import Any, Union
+from datetime import datetime, timedelta
+from typing import Any
 
 from faker import Faker
 
@@ -25,14 +25,16 @@ class DateTimeGenerator(BaseGenerator):
         super().__init__(field_name, config)
         self.date_config = config
         self.faker = Faker(locale)
-        
+
         # Parse date range
-        self.start_date = self._parse_date(config.start_date) if config.start_date else None
+        self.start_date = (
+            self._parse_date(config.start_date) if config.start_date else None
+        )
         self.end_date = self._parse_date(config.end_date) if config.end_date else None
-        
+
         # Set default range if not specified
         self._set_default_range()
-        
+
         # Seed faker for reproducible results
         self.faker.seed_instance(42)
 
@@ -57,29 +59,29 @@ class DateTimeGenerator(BaseGenerator):
                 # Try common formats
                 common_formats = [
                     "%Y-%m-%d",
-                    "%Y/%m/%d", 
+                    "%Y/%m/%d",
                     "%m/%d/%Y",
                     "%d/%m/%Y",
                     "%Y-%m-%d %H:%M:%S",
-                    "%Y-%m-%d %H:%M"
+                    "%Y-%m-%d %H:%M",
                 ]
-                
+
                 for fmt in common_formats:
                     try:
                         return datetime.strptime(date_str, fmt)
                     except ValueError:
                         continue
-                
+
                 raise ValueError(f"Unable to parse date string: {date_str}")
 
     def _set_default_range(self) -> None:
         """Set default date range if not specified."""
         if self.start_date is None:
             self.start_date = datetime(2020, 1, 1)
-        
+
         if self.end_date is None:
             self.end_date = datetime.now()
-        
+
         # Ensure start_date is before end_date
         if self.start_date > self.end_date:
             self.logger.warning(
@@ -106,7 +108,7 @@ class DateTimeGenerator(BaseGenerator):
         """
         # Generate random datetime within range
         random_datetime = self._generate_random_datetime()
-        
+
         # Format according to configuration
         return random_datetime.strftime(self.date_config.date_format)
 
@@ -129,10 +131,10 @@ class DateTimeGenerator(BaseGenerator):
         # Calculate time difference
         time_difference = self.end_date - self.start_date
         total_seconds = int(time_difference.total_seconds())
-        
+
         # Generate random offset
         random_seconds = random.randint(0, total_seconds)
-        
+
         # Return random datetime
         return self.start_date + timedelta(seconds=random_seconds)
 
@@ -177,22 +179,22 @@ class DateTimeGenerator(BaseGenerator):
             Generated business day datetime string
         """
         max_attempts = 100  # Prevent infinite loop
-        
+
         for _ in range(max_attempts):
             random_datetime = self._generate_random_datetime()
-            
+
             # Check if it's a business day (Monday=0, Sunday=6)
             if random_datetime.weekday() < 5:  # Monday-Friday
                 return random_datetime.strftime(self.date_config.date_format)
-        
+
         # Fallback: adjust to nearest business day
         random_datetime = self._generate_random_datetime()
-        
+
         # If weekend, move to Monday
         if random_datetime.weekday() >= 5:
             days_to_monday = 7 - random_datetime.weekday()
             random_datetime += timedelta(days=days_to_monday)
-        
+
         return random_datetime.strftime(self.date_config.date_format)
 
     def generate_batch_optimized(self, count: int) -> list[str]:
@@ -208,13 +210,15 @@ class DateTimeGenerator(BaseGenerator):
         # Pre-calculate time range
         time_difference = self.end_date - self.start_date
         total_seconds = int(time_difference.total_seconds())
-        
+
         # Generate all random offsets at once
         random_offsets = [random.randint(0, total_seconds) for _ in range(count)]
-        
+
         # Generate all datetimes and format them
         return [
-            (self.start_date + timedelta(seconds=offset)).strftime(self.date_config.date_format)
+            (self.start_date + timedelta(seconds=offset)).strftime(
+                self.date_config.date_format
+            )
             for offset in random_offsets
         ]
 
@@ -229,7 +233,7 @@ class DateTimeGenerator(BaseGenerator):
             "start_date": self.start_date.strftime("%Y-%m-%d %H:%M:%S"),
             "end_date": self.end_date.strftime("%Y-%m-%d %H:%M:%S"),
             "range_days": (self.end_date - self.start_date).days,
-            "format": self.date_config.date_format
+            "format": self.date_config.date_format,
         }
 
     def validate_generated_value(self, value: Any) -> bool:
@@ -244,13 +248,13 @@ class DateTimeGenerator(BaseGenerator):
         """
         if not isinstance(value, str):
             return False
-        
+
         try:
             # Try to parse with configured format
             parsed_date = datetime.strptime(value, self.date_config.date_format)
-            
+
             # Check if within valid range
             return self.start_date <= parsed_date <= self.end_date
-        
+
         except ValueError:
             return False
