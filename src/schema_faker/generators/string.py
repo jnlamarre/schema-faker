@@ -114,6 +114,24 @@ class StringGenerator(BaseGenerator):
         """
         pattern = self.string_config.pattern
 
+        # Handle quantifiers first (like {3}, {2,5}, etc.)
+        def expand_quantifiers(text):
+            # Handle {n} quantifiers
+            text = re.sub(
+                r"(\\[dws]|\[[^\]]+\])\{(\d+)\}",
+                lambda m: m.group(1) * int(m.group(2)),
+                text,
+            )
+            # Handle {n,m} quantifiers - use minimum for simplicity
+            text = re.sub(
+                r"(\\[dws]|\[[^\]]+\])\{(\d+),\d+\}",
+                lambda m: m.group(1) * int(m.group(2)),
+                text,
+            )
+            return text
+
+        expanded_pattern = expand_quantifiers(pattern)
+
         # Simple pattern substitutions
         pattern_substitutions = {
             r"\\d": lambda: str(random.randint(0, 9)),
@@ -125,10 +143,10 @@ class StringGenerator(BaseGenerator):
             r"[a-zA-Z]": lambda: random.choice(string.ascii_letters),
         }
 
-        result = pattern
+        result = expanded_pattern
         for pattern_regex, replacement_func in pattern_substitutions.items():
-            while re.search(pattern_regex, result):
-                result = re.sub(pattern_regex, replacement_func(), result, count=1)
+            # Use re.sub with a function to replace all occurrences at once
+            result = re.sub(pattern_regex, lambda m: replacement_func(), result)
 
         return result
 
